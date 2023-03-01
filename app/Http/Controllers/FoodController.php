@@ -2,32 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Food;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
+class FoodController extends Controller
 {
-
-    public function login(Request $request) {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! \Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
-
-        $token = $user->createToken($request->input('device_name', 'web'));
-        return $this->respond()
-        ->data(["token" => $token, "user" => $user])
-        ->send();
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -62,10 +41,10 @@ class AuthController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(Food $food)
     {
         //
     }
@@ -73,10 +52,10 @@ class AuthController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Food $food)
     {
         //
     }
@@ -85,10 +64,10 @@ class AuthController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Food $food)
     {
         //
     }
@@ -96,10 +75,10 @@ class AuthController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Food $food)
     {
         //
     }

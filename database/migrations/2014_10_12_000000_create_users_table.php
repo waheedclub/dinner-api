@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('pending_amount')->default(0);
             $table->decimal('advance_amount')->default(0);
             $table->boolean('status')->default(0);
+            $table->string('image')->nullable();
+            $table->enum('role', ['admin', 'finance', 'user']);
             $table->rememberToken();
             $table->timestamps();
         });
