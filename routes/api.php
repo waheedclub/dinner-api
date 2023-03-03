@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\{
-    AuthController
+    AmountController,
+    AuthController,
+    FoodController,
+    UserController
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,8 +20,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::group(['middleware' => 'auth:sanctum'], function () {
+
+    // Route::auth();
+    Route::apiResources([
+        'users' => UserController::class,
+        'foods' => FoodController::class,
+        'amounts' => AmountController::class,
+    ]);
+Route::post('/amount/update_status', [AmountController::class, 'updateStatus']);
+
 });
 
 Route::post('/auth/login', [AuthController::class, 'login']);

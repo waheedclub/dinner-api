@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
+use App\Models\Food_users;
 use Illuminate\Http\Request;
 
 class FoodController extends Controller
@@ -14,7 +15,9 @@ class FoodController extends Controller
      */
     public function index()
     {
-        //
+        return $this->respond()
+        ->data(['foods' => Food::withCount('users')->get()])
+        ->send();
     }
 
     /**
@@ -35,7 +38,30 @@ class FoodController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $validated = $request->validate([
+            'date' => 'required|date',
+            'hotel_amount' => 'required|numeric',
+            'other_amount' => 'required|numeric',
+            'owner_id' => 'required|numeric',
+             'users' => 'required|array'
+        ]);
+        unset($validated['users']);
+        $validated['added_by'] = auth()->user()->id;
+        $food = Food::create($validated);
+        if($food) {
+            $total = $request->hotel_amount + $request->other_amount;
+            $per_head = round($total/count($request->users), 2);
+            $food_user['food_id'] = $food->id;
+            $food_user['amount'] = $per_head;
+
+            foreach($request->users as $user_id) {
+                $food_user['user_id'] = $user_id;
+                Food_users::create($food_user);
+            }
+        }
+        return $this->respond()
+        ->message('Food added successfully')
+        ->send();
     }
 
     /**
@@ -46,7 +72,10 @@ class FoodController extends Controller
      */
     public function show(Food $food)
     {
-        //
+        $data['current_food'] = $food->load('users', 'given_by_user', 'added_by_user');
+        return $this->respond()
+       ->data($data)
+       ->send();
     }
 
     /**

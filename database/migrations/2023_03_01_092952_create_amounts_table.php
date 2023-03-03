@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('amounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('sender_id')->constrained('users');
+            $table->foreignId('receiver_id')->constrained('users');
             $table->decimal('amount', 12, 2);
+            $table->tinyInteger('is_approved')->default(0);
             $table->text('note')->nullable();
             $table->timestamps();
         });
