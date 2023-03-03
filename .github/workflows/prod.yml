@@ -1,0 +1,31 @@
+name: PROD
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Docker
+        run: |
+          docker login dock.abdulwaheed.me -u waheed -p ${{ secrets.DOCKER_PWD }}
+          docker pull dock.abdulwaheed.me/dinner_app
+          docker build -t dock.abdulwaheed.me/dinner_app .
+          docker push dock.abdulwaheed.me/dinner_app
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: [Build]
+    steps:
+      - name: Deploy API
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: '-n qa rollout restart deployment/api'
+      - name: Deploy API Worker
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: '-n qa rollout restart deployment/api-worker'
