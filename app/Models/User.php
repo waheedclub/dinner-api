@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -46,4 +47,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // public function getpendingAmount() {
+    //     $pending_amount = $this->hasMany(Food_users::class, 'user_id')->where('user_id', auth()->user()->id)->sum('amount');
+    //     return $pending_amount;
+    // }
+
+    protected function getadvanceAmountAttribute() {
+        $pending_amount = $this->hasMany(Food_users::class, 'user_id')->where('user_id', $this->id)->sum('amount');
+
+        $paid_amount = $this->hasMany(Food::class, 'owner_id')->where('owner_id', $this->id)->sum(\DB::raw('hotel_amount + other_amount'));
+        $given_amount = $this->hasMany(Amount::class, 'sender_id')->where('sender_id', $this->id)->where('is_approved', 1)->sum('amount');
+        $received_amount = $this->hasMany(Amount::class, 'receiver_id')->where('receiver_id', $this->id)->where('is_approved', 1)->sum('amount');
+        $total = $paid_amount + $given_amount - $pending_amount - $received_amount;
+        return round($total, 2);
+    }
 }

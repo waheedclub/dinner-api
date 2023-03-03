@@ -3,6 +3,7 @@
 use App\Http\Controllers\{
     AmountController,
     AuthController,
+    DashboardController,
     FoodController,
     UserController
 };
@@ -33,6 +34,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         'amounts' => AmountController::class,
     ]);
 Route::post('/amount/update_status', [AmountController::class, 'updateStatus']);
+Route::get('/get-dashboard-data', [DashboardController::class, 'getDashboardData']);
 
 });
 
