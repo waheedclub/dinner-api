@@ -29,6 +29,8 @@ class User extends Authenticatable
         'image',
     ];
 
+    protected $appends = ['total_spendings'];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -60,6 +62,15 @@ class User extends Authenticatable
         $given_amount = $this->hasMany(Amount::class, 'sender_id')->where('sender_id', $this->id)->where('is_approved', 1)->sum('amount');
         $received_amount = $this->hasMany(Amount::class, 'receiver_id')->where('receiver_id', $this->id)->where('is_approved', 1)->sum('amount');
         $total = $paid_amount + $given_amount - $pending_amount - $received_amount;
+        return round($total, 2);
+    }
+
+    protected function gettotalSpendingsAttribute() {
+
+        $paid_amount = $this->hasMany(Food::class, 'owner_id')->where('owner_id', $this->id)->sum(\DB::raw('hotel_amount + other_amount'));
+        $given_amount = $this->hasMany(Amount::class, 'sender_id')->where('sender_id', $this->id)->where('is_approved', 1)->sum('amount');
+        $received_amount = $this->hasMany(Amount::class, 'receiver_id')->where('receiver_id', $this->id)->where('is_approved', 1)->sum('amount');
+        $total = $paid_amount + $given_amount  - $received_amount;
         return round($total, 2);
     }
 }

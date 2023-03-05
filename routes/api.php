@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         'foods' => FoodController::class,
         'amounts' => AmountController::class,
     ]);
-Route::post('/amount/update_status', [AmountController::class, 'updateStatus']);
+Route::post('/amount/update_status', [AmountController::class, 'updateStatus'])->middleware('admin');
 Route::get('/get-dashboard-data', [DashboardController::class, 'getDashboardData']);
 
 });
