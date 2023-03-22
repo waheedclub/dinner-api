@@ -109,6 +109,11 @@ class FoodController extends Controller
      */
     public function destroy(Food $food)
     {
-        //
+        $this->middleware('admin');
+        $food->food_users()->delete();
+        $food->delete();
+        return $this->respond()
+        ->message("Food item deleted successfully")
+        ->send();
     }
 }

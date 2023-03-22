@@ -19,6 +19,10 @@ class Food extends Model
         return $this->belongsToMany(User::class, Food_users::class, 'food_id', 'user_id')->withPivot('amount');
     }
 
+    public function food_users() {
+        return $this->hasMany(Food_users::class, 'food_id');
+    }
+
     public function added_by_user() {
         return $this->belongsTo(User::class, 'added_by');
     }
