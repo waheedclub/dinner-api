@@ -27,5 +27,5 @@ jobs:
       - name: Deploy API Worker
         uses: steebchen/kubectl@v2.0.0
         with:
-          config: ${{ secrets.KUBE_CONFIG }}
+          config: ${{ secrets.KUBE_CONFIG }} 
           command: '-n qa rollout restart deployment/api-worker'
